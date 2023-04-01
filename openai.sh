@@ -54,7 +54,7 @@ if [[ $(curl -sS -m 10 https://chat.openai.com/ -I 2>/dev/null | grep "text/plai
 	echo "Your IP is BLOCKED!"
 else
 	echo -e "[IPv4]"
-	check4=`ping -W 10 1.1.1.1 -c 1 2>&1`;
+	check4=`ping -W 10 1.1.1.1 -c 1 2>&1`; > /dev/null 2>&1
 	if [[ "$check4" != *"received"* || "$check4" != *"transmitted"* || "$check4" == *"timed out"* ]]; then
 		echo -e "\033[34mIPv4 is not supported on the current host. Skip...\033[0m";
 	else
@@ -73,7 +73,7 @@ else
 	fi
 	echo "-------------------------------------"
 	echo -e "[IPv6]"
-	check6=`ping6 -w 10 240c::6666 -c 1 2>&1`;
+	check6=`ping6 -w 10 240c::6666 -c 1 2>&1`; > /dev/null 2>&1
 	if [[ "$check6" != *"received"* || "$check6" != *"transmitted"* || "$check6" == *"timed out"* ]]; then
 		echo -e "\033[34mIPv6 is not supported on the current host. Skip...\033[0m";    
 	else
