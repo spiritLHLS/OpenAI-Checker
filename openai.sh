@@ -36,10 +36,8 @@ done
 apt-get --fix-broken install -y > /dev/null 2>&1
 
 checkping() {
-    echo "checking ping"
 	if  [ ! -e '/usr/bin/ping' ]; then
-            echo "Installing ping"
-	        ! ${PACKAGE_INSTALL[int]} iputils-ping || ${PACKAGE_INSTALL[int]} ping > /dev/null 2>&1
+		! ${PACKAGE_INSTALL[int]} iputils-ping || ${PACKAGE_INSTALL[int]} ping > /dev/null 2>&1
 	fi
 }
 
