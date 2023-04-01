@@ -2,7 +2,7 @@
 ###
  # @Edited Author: spiritlhl
  # @Date: 2023-04-02
- # Repo: https://github.com/spiritLHLS/OpenAI-Checker
+ # @Repo: https://github.com/spiritLHLS/OpenAI-Checker
  # @Original Author: Vincent Young
  # @LastEditors: Vincent Young
  # @LastEditTime: 2023-02-15 20:54:40
