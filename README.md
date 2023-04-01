@@ -1,7 +1,7 @@
 # OpenAI-Checker
 Used to check if your IP can access OpenAI services.
 
-# My Modifications
+# My Modifications - by spiritlhl
 
 Increase the timeout limit for requests
 
