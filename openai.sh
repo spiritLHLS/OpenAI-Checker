@@ -1,8 +1,9 @@
 #!/bin/bash
 ###
  # @Edited Author: spiritlhl
+ # @Date: 2023-04-02
+ # Repo: https://github.com/spiritLHLS/OpenAI-Checker
  # @Original Author: Vincent Young
- # @Date: 2023-02-09 17:39:59
  # @LastEditors: Vincent Young
  # @LastEditTime: 2023-02-15 20:54:40
  # @FilePath: /OpenAI-Checker/openai.sh
