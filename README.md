@@ -1,6 +1,24 @@
 # OpenAI-Checker
 Used to check if your IP can access OpenAI services.
 
+# My Modifications
+
+Increase the timeout limit for requests
+
+Add error handling to avoid error output
+
+```
+bash <(curl -Ls https://bash.spiritlhl.net/openai-checker)
+```
+
+or
+
+```
+bash <(curl -Ls https://raw.githubusercontent.com/spiritLHLS/OpenAI-Checker/main/openai.sh)
+```
+
+**The following descriptions are from the original repo**
+
 ## Notice
 **I have only created this script, and any other websites and programs for OpenAI service availability checking are not my responsibility, so please judge the accuracy by yourself. Theoretically, it is not possible to make accurate judgments through the web side, so it is recommended that you do so through a shell.**
 
