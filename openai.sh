@@ -50,8 +50,7 @@ echo -e "${BLUE}Current repo: https://github.com/spiritLHLS/OpenAI-Checker${PLAI
 echo -e "${BLUE}Original Author: Vincent${PLAIN}"
 echo -e "${BLUE}Original repo: https://github.com/missuo/OpenAI-Checker${PLAIN}"
 echo "-------------------------------------"
-if [[ $(curl -sS -m 10 https://chat.openai.com/ -I | grep "text/plain") != "" ]]
-then
+if [[ $(curl -sS -m 10 https://chat.openai.com/ -I 2>/dev/null | grep "text/plain") != "" ]] >/dev/null 2>&1; then
 	echo "Your IP is BLOCKED!"
 else
 	echo -e "[IPv4]"
