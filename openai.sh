@@ -35,8 +35,6 @@ for ((int = 0; int < ${#REGEX[@]}; int++)); do
 done
 apt-get --fix-broken install -y > /dev/null 2>&1
 
-
-
 checkping() {
     echo "checking ping"
 	if  [ ! -e '/usr/bin/ping' ]; then
@@ -45,27 +43,6 @@ checkping() {
 	fi
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-check_ipv4
 checkping
 echo -e "${BLUE}OpenAI Access Checker. ${PLAIN}"
 echo -e "${BLUE}Current Author: spiritlhl${PLAIN}"
