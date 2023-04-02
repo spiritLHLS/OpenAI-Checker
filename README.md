@@ -7,6 +7,8 @@ Increase the timeout limit for requests
 
 Add error handling to avoid error output
 
+Change IPV4 and IPV6 check methods
+
 ```
 bash <(curl -Ls https://bash.spiritlhl.net/openai-checker)
 ```
