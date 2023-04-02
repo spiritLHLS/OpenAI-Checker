@@ -77,45 +77,51 @@ if [[ $(curl -sS -m 10 https://chat.openai.com/ -I 2>/dev/null | grep "text/plai
 	echo "Your IP is BLOCKED!"
 else
 	echo -e "[IPv4]"
-	if [ -n "${IP4_API+x}" ] > /dev/null 2>&1; then
-		check4=$(curl -s4m8 "$IP4_API") > /dev/null 2>&1;
-	fi
-	if [ $? -ne 0 ]; then
-		echo -e "\033[34mIPv4 is not supported on the current host. Skip...\033[0m";
-	else
-		# local_ipv4=$(curl --fail -4 -s --max-time 10 api64.ipify.org) > /dev/null 2>&1
-		local_ipv4=$(curl --fail -4 -sS -m 10 https://chat.openai.com/cdn-cgi/trace 2>/dev/null | grep "ip=" | awk -F= '{print $2}') > /dev/null 2>&1
-		local_isp4=$(curl --fail -s -4 --max-time 10  --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.87 Safari/537.36" "https://api.ip.sb/geoip/${local_ipv4}" | grep organization | cut -f4 -d '"') > /dev/null 2>&1
-		#local_asn4=$(curl --fail -s -4 --max-time 10  --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.87 Safari/537.36" "https://api.ip.sb/geoip/${local_ipv4}" | grep asn | cut -f8 -d ',' | cut -f2 -d ':') > /dev/null 2>&1
-		echo -e "${BLUE}Your IPv4: ${local_ipv4} - ${local_isp4}${PLAIN}"
-		iso2_code4=$(curl --fail -4 -sS -m 10 https://chat.openai.com/cdn-cgi/trace 2>/dev/null | grep "loc=" | awk -F= '{print $2}') > /dev/null 2>&1
-		if [[ "${SUPPORT_COUNTRY[@]}"  =~ "${iso2_code4}" ]]; 
-		then
-			echo -e "${GREEN}Your IP supports access to OpenAI. Region: ${iso2_code4}${PLAIN}" 
-		else
-			echo -e "${RED}Region: ${iso2_code4}. Not support OpenAI at this time.${PLAIN}"
-		fi
+	if [ -n "${IP4_API+x}" ]; then
+	  temp_file=$(mktemp)
+	  curl -s4m8 "$IP4_API" > "$temp_file" 2>&1
+	  if [ $? -ne 0 ]; then
+	    echo -e "\033[34mIPv4 is not supported on the current host. Skip...\033[0m";
+	  else
+	    check4=$(cat "$temp_file")
+	    # local_ipv4=$(curl --fail -4 -s --max-time 10 api64.ipify.org) > /dev/null 2>&1
+	    local_ipv4=$(curl --fail -4 -sS -m 10 https://chat.openai.com/cdn-cgi/trace 2>/dev/null | grep "ip=" | awk -F= '{print $2}') > /dev/null 2>&1
+	    local_isp4=$(curl --fail -s -4 --max-time 10  --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.87 Safari/537.36" "https://api.ip.sb/geoip/${local_ipv4}" | grep organization | cut -f4 -d '"') > /dev/null 2>&1
+	    #local_asn4=$(curl --fail -s -4 --max-time 10  --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.87 Safari/537.36" "https://api.ip.sb/geoip/${local_ipv4}" | grep asn | cut -f8 -d ',' | cut -f2 -d ':') > /dev/null 2>&1
+	    echo -e "${BLUE}Your IPv4: ${local_ipv4} - ${local_isp4}${PLAIN}"
+	    iso2_code4=$(curl --fail -4 -sS -m 10 https://chat.openai.com/cdn-cgi/trace 2>/dev/null | grep "loc=" | awk -F= '{print $2}') > /dev/null 2>&1
+	    if [[ "${SUPPORT_COUNTRY[@]}"  =~ "${iso2_code4}" ]]; 
+	    then
+		echo -e "${GREEN}Your IP supports access to OpenAI. Region: ${iso2_code4}${PLAIN}" 
+	    else
+		echo -e "${RED}Region: ${iso2_code4}. Not support OpenAI at this time.${PLAIN}"
+	    fi
+	  fi
+	  rm "$temp_file"
 	fi
 	echo "-------------------------------------"
 	echo -e "[IPv6]"
-	if [ -n "${IP6_API+x}" ] > /dev/null 2>&1; then
-		check6=$(curl -s6m8 "$IP6_API") > /dev/null 2>&1;
-	fi
-	if [ $? -ne 0 ]; then
-		echo -e "\033[34mIPv6 is not supported on the current host. Skip...\033[0m";    
-	else
-		# local_ipv6=$(curl --fail -6 -s --max-time 10 api64.ipify.org) > /dev/null 2>&1
-		local_ipv6=$(curl --fail -6 -sS -m 10 https://chat.openai.com/cdn-cgi/trace 2>/dev/null | grep "ip=" | awk -F= '{print $2}') > /dev/null 2>&1
-		local_isp6=$(curl --fail -s -6 --max-time 10 --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.87 Safari/537.36" "https://api.ip.sb/geoip/${local_ipv6}" | grep organization | cut -f4 -d '"') > /dev/null 2>&1
-		#local_asn6=$(curl --fail -s -6 --max-time 10  --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.87 Safari/537.36" "https://api.ip.sb/geoip/${local_ipv6}" | grep asn | cut -f8 -d ',' | cut -f2 -d ':') > /dev/null 2>&1
-		echo -e "${BLUE}Your IPv6: ${local_ipv6} - ${local_isp6}${PLAIN}"
-		iso2_code6=$(curl --fail -6 -sS -m 10 https://chat.openai.com/cdn-cgi/trace 2>/dev/null | grep "loc=" | awk -F= '{print $2}') > /dev/null 2>&1
-		if [[ "${SUPPORT_COUNTRY[@]}"  =~ "${iso2_code6}" ]]; 
-		then
-			echo -e "${GREEN}Your IP supports access to OpenAI. Region: ${iso2_code6}${PLAIN}" 
-		else
-			echo -e "${RED}Region: ${iso2_code6}. Not support OpenAI at this time.${PLAIN}"
-		fi
+	if [ -n "${IP6_API+x}" ]; then
+	  temp_file=$(mktemp)
+	  curl -s6m8 "$IP6_API" > "$temp_file" 2>&1
+	  if [ $? -ne 0 ]; then
+	    echo -e "\033[34mIPv6 is not supported on the current host. Skip...\033[0m";    
+	  else
+	    check6=$(cat "$temp_file")
+	    # local_ipv6=$(curl --fail -6 -s --max-time 10 api64.ipify.org) > /dev/null 2>&1
+	    local_ipv6=$(curl --fail -6 -sS -m 10 https://chat.openai.com/cdn-cgi/trace 2>/dev/null | grep "ip=" | awk -F= '{print $2}') > /dev/null 2>&1
+	    local_isp6=$(curl --fail -s -6 --max-time 10 --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.87 Safari/537.36" "https://api.ip.sb/geoip/${local_ipv6}" | grep organization | cut -f4 -d '"') > /dev/null 2>&1
+	    #local_asn6=$(curl --fail -s -6 --max-time 10  --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.87 Safari/537.36" "https://api.ip.sb/geoip/${local_ipv6}" | grep asn | cut -f8 -d ',' | cut -f2 -d ':') > /dev/null 2>&1
+	    echo -e "${BLUE}Your IPv6: ${local_ipv6} - ${local_isp6}${PLAIN}"
+	    iso2_code6=$(curl --fail -6 -sS -m 10 https://chat.openai.com/cdn-cgi/trace 2>/dev/null | grep "loc=" | awk -F= '{print $2}') > /dev/null 2>&1
+	    if [[ "${SUPPORT_COUNTRY[@]}"  =~ "${iso2_code6}" ]]; 
+	    then
+		echo -e "${GREEN}Your IP supports access to OpenAI. Region: ${iso2_code6}${PLAIN}" 
+	    else
+	    	echo -e "${RED}Region: ${iso2_code6}. Not support OpenAI at this time.${PLAIN}"
+	    fi
+	  fi
+	  rm "$temp_file"
 	fi
 	echo "-------------------------------------"
 fi
