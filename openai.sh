@@ -76,8 +76,8 @@ get_ip(){
         fi
 }
 
-checkipv4
-checkipv6
+check_ipv4
+check_ipv6
 get_ip
 local_ipv4=""
 local_isp4=""
