@@ -41,7 +41,7 @@ checkping() {
 	fi
 }
 
-checkping
+checkping > /dev/null 2>&1
 local_ipv4=""
 local_isp4=""
 iso2_code4=""
