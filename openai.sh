@@ -41,10 +41,11 @@ check_ipv4(){
     response=$(curl -s4m8 "$p")
     sleep 1
     if [ $? -eq 0 ] && ! echo "$response" | grep -q "error"; then
-      export IP4_API="$p"
+      IP4_API="$p"
       break
     fi
   done
+  export IP4_API
 }
 
 check_ipv6(){
@@ -53,28 +54,37 @@ check_ipv6(){
     response=$(curl -s6m8 "$p")
     sleep 1
     if [ $? -eq 0 ] && ! echo "$response" | grep -q "error"; then
-      export IP6_API="$p"
+      IP6_API="$p"
       break
     fi
   done
+  export IP6_API
 }
 
 get_ip(){
-	if [ -n "${IP4_API+x}" ] > /dev/null 2>&1; then
-	    export check4=$(curl -s4m8 "$IP4_API")
-	fi
-	if [ $? -ne 0 ]; then
-	    echo -e "\033[34mIPv4 is not supported on the current host. Skip...\033[0m";
-	    export ipv4_status=0
-	fi
-	if [ -n "${IP6_API+x}" ] > /dev/null 2>&1; then
-	    export check6=$(curl -s6m8 "$IP6_API") > /dev/null 2>&1;
-	fi
-	if [ $? -ne 0 ]; then
-	    echo -e "\033[34mIPv6 is not supported on the current host. Skip...\033[0m";  
-	    export ipv6_status=0
-        fi
+  if [ -n "${IP4_API+x}" ]; then
+    check4=$(curl -s4m8 "$IP4_API")
+    if [ $? -ne 0 ]; then
+      echo -e "\033[34mIPv4 is not supported on the current host. Skip...\033[0m";
+      export ipv4_status=0
+    fi
+  fi
+
+  if [ -n "${IP6_API+x}" ]; then
+    check6=$(curl -s6m8 "$IP6_API")
+    if [ $? -ne 0 ]; then
+      echo -e "\033[34mIPv6 is not supported on the current host. Skip...\033[0m";  
+      export ipv6_status=0
+    fi
+  fi
+  if [ "$ipv4_status" != "0" ]; then
+  	 export check4
+  fi
+  if [ "$ipv6_status" != "0" ]; then
+  	 export check6
+  fi
 }
+
 
 check_ipv4
 check_ipv6
