@@ -35,13 +35,47 @@ for ((int = 0; int < ${#REGEX[@]}; int++)); do
 done
 apt-get --fix-broken install -y > /dev/null 2>&1
 
-checkping() {
-	if  [ ! -e '/usr/bin/ping' ]; then
-		! ${PACKAGE_INSTALL[int]} iputils-ping || ${PACKAGE_INSTALL[int]} ping > /dev/null 2>&1
-	fi
+# 判断宿主机的 IPv4 或双栈情况 没有拉取不了 docker
+check_ipv4(){
+  # 遍历本机可以使用的 IP API 服务商
+  # 定义可能的 IP API 服务商
+  API_NET=("ip.sb" "ipget.net" "ip.ping0.cc" "https://ip4.seeip.org" "https://api.my-ip.io/ip" "https://ipv4.icanhazip.com" "api.ipify.org")
+
+  # 遍历每个 API 服务商，并检查它是否可用
+  for p in "${API_NET[@]}"; do
+    # 使用 curl 请求每个 API 服务商
+    response=$(curl -s4m8 "$p")
+    sleep 1
+    # 检查请求是否失败，或者回传内容中是否包含 error
+    if [ $? -eq 0 ] && ! echo "$response" | grep -q "error"; then
+      # 如果请求成功且不包含 error，则设置 IP_API 并退出循环
+      IP4_API="$p"
+      break
+    fi
+  done
 }
 
-checkping > /dev/null 2>&1
+check_ipv6(){
+  # 遍历本机可以使用的 IP API 服务商
+  # 定义可能的 IP API 服务商
+  API_NET=("ip.sb" "ipget.net" "ip.ping0.cc" "https://ip4.seeip.org" "https://api.my-ip.io/ip" "https://ipv4.icanhazip.com" "api.ipify.org")
+
+  # 遍历每个 API 服务商，并检查它是否可用
+  for p in "${API_NET[@]}"; do
+    # 使用 curl 请求每个 API 服务商
+    response=$(curl -s6m8 "$p")
+    sleep 1
+    # 检查请求是否失败，或者回传内容中是否包含 error
+    if [ $? -eq 0 ] && ! echo "$response" | grep -q "error"; then
+      # 如果请求成功且不包含 error，则设置 IP_API 并退出循环
+      IP6_API="$p"
+      break
+    fi
+  done
+}
+
+checkipv4 > /dev/null 2>&1
+checkipv6 > /dev/null 2>&1
 local_ipv4=""
 local_isp4=""
 iso2_code4=""
@@ -58,8 +92,8 @@ if [[ $(curl -sS -m 10 https://chat.openai.com/ -I 2>/dev/null | grep "text/plai
 	echo "Your IP is BLOCKED!"
 else
 	echo -e "[IPv4]"
-	check4=`ping -W 10 1.1.1.1 -c 1 2>&1`; > /dev/null 2>&1
-	if [[ "$check4" != *"received"* || "$check4" != *"transmitted"* || "$check4" == *"timed out"* ]]; then
+	if [ -n "${IP4_API+x}" ] > /dev/null 2>&1; then
+		check4=$(curl -s4m8 "$IP4_API") > /dev/null 2>&1;
 		echo -e "\033[34mIPv4 is not supported on the current host. Skip...\033[0m";
 	else
 		# local_ipv4=$(curl --fail -4 -s --max-time 10 api64.ipify.org) > /dev/null 2>&1
@@ -77,8 +111,8 @@ else
 	fi
 	echo "-------------------------------------"
 	echo -e "[IPv6]"
-	check6=`ping6 -w 10 240c::6666 -c 1 2>&1`; > /dev/null 2>&1
-	if [[ "$check6" != *"received"* || "$check6" != *"transmitted"* || "$check6" == *"timed out"* ]]; then
+	if [ -n "${IP6_API+x}" ] > /dev/null 2>&1; then
+		check6=$(curl -s6m8 "$IP4_API") > /dev/null 2>&1;
 		echo -e "\033[34mIPv6 is not supported on the current host. Skip...\033[0m";    
 	else
 		# local_ipv6=$(curl --fail -6 -s --max-time 10 api64.ipify.org) > /dev/null 2>&1
