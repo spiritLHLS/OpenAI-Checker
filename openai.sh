@@ -41,7 +41,7 @@ check_ipv4(){
     response=$(curl -s4m8 "$p")
     sleep 1
     if [ $? -eq 0 ] && ! echo "$response" | grep -q "error"; then
-      IP4_API="$p"
+      export IP4_API="$p"
       break
     fi
   done
@@ -53,14 +53,32 @@ check_ipv6(){
     response=$(curl -s6m8 "$p")
     sleep 1
     if [ $? -eq 0 ] && ! echo "$response" | grep -q "error"; then
-      IP6_API="$p"
+      export IP6_API="$p"
       break
     fi
   done
 }
 
-checkipv4 > /dev/null 2>&1
-checkipv6 > /dev/null 2>&1
+get_ip(){
+	if [ -n "${IP4_API+x}" ] > /dev/null 2>&1; then
+	    export check4=$(curl -s4m8 "$IP4_API")
+	fi
+	if [ $? -ne 0 ]; then
+	    echo -e "\033[34mIPv4 is not supported on the current host. Skip...\033[0m";
+	    export ipv4_status=0
+	fi
+	if [ -n "${IP6_API+x}" ] > /dev/null 2>&1; then
+	    export check6=$(curl -s6m8 "$IP6_API") > /dev/null 2>&1;
+	fi
+	if [ $? -ne 0 ]; then
+	    echo -e "\033[34mIPv6 is not supported on the current host. Skip...\033[0m";  
+	    export ipv6_status=0
+        fi
+}
+
+checkipv4
+checkipv6
+get_ip
 local_ipv4=""
 local_isp4=""
 iso2_code4=""
@@ -77,12 +95,7 @@ if [[ $(curl -sS -m 10 https://chat.openai.com/ -I 2>/dev/null | grep "text/plai
 	echo "Your IP is BLOCKED!"
 else
 	echo -e "[IPv4]"
-	if [ -n "${IP4_API+x}" ] > /dev/null 2>&1; then
-		check4=$(curl -s4m8 "$IP4_API") > /dev/null 2>&1;
-	fi
-	if [ $? -ne 0 ]; then
-		echo -e "\033[34mIPv4 is not supported on the current host. Skip...\033[0m";
-	else
+	if [ "$ipv4_status" != "0" ]; then
 		# local_ipv4=$(curl --fail -4 -s --max-time 10 api64.ipify.org) > /dev/null 2>&1
 		local_ipv4=$(curl --fail -4 -sS -m 10 https://chat.openai.com/cdn-cgi/trace 2>/dev/null | grep "ip=" | awk -F= '{print $2}') > /dev/null 2>&1
 		local_isp4=$(curl --fail -s -4 --max-time 10  --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.87 Safari/537.36" "https://api.ip.sb/geoip/${local_ipv4}" | grep organization | cut -f4 -d '"') > /dev/null 2>&1
@@ -98,12 +111,7 @@ else
 	fi
 	echo "-------------------------------------"
 	echo -e "[IPv6]"
-	if [ -n "${IP6_API+x}" ] > /dev/null 2>&1; then
-		check6=$(curl -s6m8 "$IP6_API") > /dev/null 2>&1;
-	fi
-	if [ $? -ne 0 ]; then
-		echo -e "\033[34mIPv6 is not supported on the current host. Skip...\033[0m";    
-	else
+	if [ "$ipv6_status" != "0" ]; then
 		# local_ipv6=$(curl --fail -6 -s --max-time 10 api64.ipify.org) > /dev/null 2>&1
 		local_ipv6=$(curl --fail -6 -sS -m 10 https://chat.openai.com/cdn-cgi/trace 2>/dev/null | grep "ip=" | awk -F= '{print $2}') > /dev/null 2>&1
 		local_isp6=$(curl --fail -s -6 --max-time 10 --user-agent "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.87 Safari/537.36" "https://api.ip.sb/geoip/${local_ipv6}" | grep organization | cut -f4 -d '"') > /dev/null 2>&1
