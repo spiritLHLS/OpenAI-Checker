@@ -79,6 +79,8 @@ else
 	echo -e "[IPv4]"
 	if [ -n "${IP4_API+x}" ] > /dev/null 2>&1; then
 		check4=$(curl -s4m8 "$IP4_API") > /dev/null 2>&1;
+	fi
+	if [ $? -ne 0 ]; then
 		echo -e "\033[34mIPv4 is not supported on the current host. Skip...\033[0m";
 	else
 		# local_ipv4=$(curl --fail -4 -s --max-time 10 api64.ipify.org) > /dev/null 2>&1
@@ -98,6 +100,8 @@ else
 	echo -e "[IPv6]"
 	if [ -n "${IP6_API+x}" ] > /dev/null 2>&1; then
 		check6=$(curl -s6m8 "$IP6_API") > /dev/null 2>&1;
+	fi
+	if [ $? -ne 0 ]; then
 		echo -e "\033[34mIPv6 is not supported on the current host. Skip...\033[0m";    
 	else
 		# local_ipv6=$(curl --fail -6 -s --max-time 10 api64.ipify.org) > /dev/null 2>&1
