@@ -2,15 +2,15 @@
 ###
  # @Edited Author: spiritlhl
  # @Date: 2023-04-02
- # @Repo: https://github.com/spiritLHLS/OpenAI-Checker
- # @Original Author: Vincent Young
- # @LastEditors: Vincent Young
  # @LastEditTime: 2023-02-15 20:54:40
  # @FilePath: /OpenAI-Checker/openai.sh
  # @Telegram: https://t.me/missuo
  # 
  # Copyright © 2023 by Vincent, All Rights Reserved. 
 ### 
+ # @Repo: https://github.com/spiritLHLS/OpenAI-Checker
+ # @Original Author: Vincent Young
+ # @LastEditors: Vincent Young
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -35,20 +35,12 @@ for ((int = 0; int < ${#REGEX[@]}; int++)); do
 done
 apt-get --fix-broken install -y > /dev/null 2>&1
 
-# 判断宿主机的 IPv4 或双栈情况 没有拉取不了 docker
 check_ipv4(){
-  # 遍历本机可以使用的 IP API 服务商
-  # 定义可能的 IP API 服务商
   API_NET=("ip.sb" "ipget.net" "ip.ping0.cc" "https://ip4.seeip.org" "https://api.my-ip.io/ip" "https://ipv4.icanhazip.com" "api.ipify.org")
-
-  # 遍历每个 API 服务商，并检查它是否可用
   for p in "${API_NET[@]}"; do
-    # 使用 curl 请求每个 API 服务商
     response=$(curl -s4m8 "$p")
     sleep 1
-    # 检查请求是否失败，或者回传内容中是否包含 error
     if [ $? -eq 0 ] && ! echo "$response" | grep -q "error"; then
-      # 如果请求成功且不包含 error，则设置 IP_API 并退出循环
       IP4_API="$p"
       break
     fi
@@ -56,18 +48,11 @@ check_ipv4(){
 }
 
 check_ipv6(){
-  # 遍历本机可以使用的 IP API 服务商
-  # 定义可能的 IP API 服务商
   API_NET=("ip.sb" "ipget.net" "ip.ping0.cc" "https://ip4.seeip.org" "https://api.my-ip.io/ip" "https://ipv4.icanhazip.com" "api.ipify.org")
-
-  # 遍历每个 API 服务商，并检查它是否可用
   for p in "${API_NET[@]}"; do
-    # 使用 curl 请求每个 API 服务商
     response=$(curl -s6m8 "$p")
     sleep 1
-    # 检查请求是否失败，或者回传内容中是否包含 error
     if [ $? -eq 0 ] && ! echo "$response" | grep -q "error"; then
-      # 如果请求成功且不包含 error，则设置 IP_API 并退出循环
       IP6_API="$p"
       break
     fi
@@ -112,7 +97,7 @@ else
 	echo "-------------------------------------"
 	echo -e "[IPv6]"
 	if [ -n "${IP6_API+x}" ] > /dev/null 2>&1; then
-		check6=$(curl -s6m8 "$IP4_API") > /dev/null 2>&1;
+		check6=$(curl -s6m8 "$IP6_API") > /dev/null 2>&1;
 		echo -e "\033[34mIPv6 is not supported on the current host. Skip...\033[0m";    
 	else
 		# local_ipv6=$(curl --fail -6 -s --max-time 10 api64.ipify.org) > /dev/null 2>&1
