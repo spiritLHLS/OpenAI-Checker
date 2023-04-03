@@ -65,7 +65,6 @@ get_ip(){
   if [ -n "${IP4_API+x}" ]; then
     check4=$(curl -s4m8 "$IP4_API")
     if [ $? -ne 0 ]; then
-      echo -e "\033[34mIPv4 is not supported on the current host. Skip...\033[0m";
       export ipv4_status=0
     fi
   fi
@@ -73,7 +72,6 @@ get_ip(){
   if [ -n "${IP6_API+x}" ]; then
     check6=$(curl -s6m8 "$IP6_API")
     if [ $? -ne 0 ]; then
-      echo -e "\033[34mIPv6 is not supported on the current host. Skip...\033[0m";  
       export ipv6_status=0
     fi
   fi
@@ -118,6 +116,8 @@ else
 		else
 			echo -e "${RED}Region: ${iso2_code4}. Not support OpenAI at this time.${PLAIN}"
 		fi
+	else
+		echo -e "\033[34mIPv4 is not supported on the current host. Skip...\033[0m";
 	fi
 	echo "-------------------------------------"
 	echo -e "[IPv6]"
@@ -134,6 +134,8 @@ else
 		else
 			echo -e "${RED}Region: ${iso2_code6}. Not support OpenAI at this time.${PLAIN}"
 		fi
+	else
+		echo -e "\033[34mIPv6 is not supported on the current host. Skip...\033[0m";  
 	fi
 	echo "-------------------------------------"
 fi
