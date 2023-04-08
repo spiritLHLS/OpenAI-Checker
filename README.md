@@ -27,7 +27,7 @@ bash <(curl -Ls https://raw.githubusercontent.com/spiritLHLS/OpenAI-Checker/main
 ## Detection method
 Our detection results come from **Cloudflare** and the accuracy is independent of this script.   
 
-At present, there are 161 countries supported, and I will continue to update the countries and regions newly supported by OpenAI.
+At present, there are 163 countries supported, and I will continue to update the countries and regions newly supported by OpenAI.
 
 ## Usage
 ```shell
