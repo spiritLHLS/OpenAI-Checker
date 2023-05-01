@@ -34,6 +34,11 @@ for ((int = 0; int < ${#REGEX[@]}; int++)); do
     fi
 done
 apt-get --fix-broken install -y > /dev/null 2>&1
+utf8_locale=$(locale -a 2>/dev/null | grep -i -m 1 -E "utf8|UTF-8")
+export LC_ALL="$utf8_locale"
+export LANG="$utf8_locale"
+export LANGUAGE="$utf8_locale"
+
 
 check_ipv4(){
   API_NET=("ip.sb" "ipget.net" "ip.ping0.cc" "https://ip4.seeip.org" "https://api.my-ip.io/ip" "https://ipv4.icanhazip.com" "api.ipify.org")
